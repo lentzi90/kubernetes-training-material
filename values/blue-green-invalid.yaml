@@ -1,0 +1,6 @@
+image:
+  repository: lennartj/not-found
+  tag: v2
+service:
+  type: NodePort
+  port: 80

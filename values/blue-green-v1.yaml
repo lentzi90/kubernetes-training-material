@@ -1,0 +1,6 @@
+image:
+  repository: lennartj/blue-green
+  tag: v1
+service:
+  type: NodePort
+  port: 80
