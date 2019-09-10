@@ -1,0 +1,5 @@
+---
+backend:
+  image: lennartj/k8s-test-app-backend
+  tag: latest
+  pullPolicy: IfNotPresent
