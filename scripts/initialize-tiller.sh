@@ -49,13 +49,5 @@ helm init \
 # Wait for tiller to become ready
 # We cannot use `--wait` due to this: https://github.com/helm/helm/issues/5170
 kubectl rollout status deployment tiller-deploy -n ${NAMESPACE}
-# ready_pods=$(kubectl get deployment -n ${NAMESPACE} tiller-deploy -o jsonpath='{.status.readyReplicas}')
-# # Set default 0 (output is empty if no pod is ready)
-# until [ ${ready_pods:=0} -eq 1 ]
-# do
-#     echo "Waiting for tiller to become ready..."
-#     sleep 2s
-#     ready_pods=$(kubectl get deployment -n ${NAMESPACE} tiller-deploy -o jsonpath='{.status.readyReplicas}')
-# done
 
 echo "Tiller deployed in namespace ${NAMESPACE}."
