@@ -44,6 +44,7 @@ helm init \
     --tls-ca-cert=${CERT_DIR}/ca.pem \
     --service-account=tiller \
     --upgrade \
+    --history-max 200 \
     --tiller-namespace=${NAMESPACE}
 
 # Wait for tiller to become ready
