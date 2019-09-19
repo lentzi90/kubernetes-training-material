@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: red-ingress
+  namespace: red
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+    - from:
+      - namespaceSelector:
+          matchLabels:
+            color: blue
+  egress:
+    - to:
+      # Allow egress to kube-dns for nameresolution
+      - namespaceSelector:
+          matchLabels:
+            system: "true"
+        podSelector:
+            matchLabels:
+              k8s-app: kube-dns
