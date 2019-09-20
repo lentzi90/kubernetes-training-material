@@ -7,6 +7,9 @@ metadata:
   namespace: ha
 spec:
   replicas: 2
+  # strategy:
+  #   rollingUpdate:
+  #     maxSurge: 0
   selector:
     matchLabels:
       app: nginx
