@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: demo
+  name: demo
+  namespace: resource-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demo
+  template:
+    metadata:
+      labels:
+        app: demo
+    spec:
+      containers:
+        - name: memory-demo
+          image: polinux/stress
+          resources:
+            # Too low
+            requests:
+              memory: "50Mi"
+            limits:
+              memory: "100Mi"
+            # Way too much
+            # requests:
+            #   memory: "1000Gi"
+            # limits:
+            #   memory: "1000Gi"
+          command: ["stress"]
+          args: ["--vm", "1", "--vm-bytes", "250M", "--vm-hang", "1"]
