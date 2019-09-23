@@ -33,4 +33,4 @@ default_tags = {
 #  Product = "kubernetes"
 }
 
-inventory_file = "../../../inventory/hosts"
+inventory_file = "hosts.ini"

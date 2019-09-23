@@ -1,10 +1,4 @@
-terraform {
-  required_version = ">= 0.8.7"
-}
-
 provider "aws" {
-  # access_key = "${var.AWS_ACCESS_KEY_ID}"
-  # secret_key = "${var.AWS_SECRET_ACCESS_KEY}"
   region = var.AWS_DEFAULT_REGION
 }
 
@@ -189,7 +183,7 @@ data "template_file" "inventory" {
       formatlist(
         "%s ansible_host=%s",
         aws_instance.k8s-master.*.tags.Name,
-        aws_instance.k8s-master.*.private_ip,
+        aws_instance.k8s-master.*.public_ip,
       ),
     )
     connection_strings_node = join(
@@ -197,7 +191,7 @@ data "template_file" "inventory" {
       formatlist(
         "%s ansible_host=%s",
         aws_instance.k8s-worker.*.tags.Name,
-        aws_instance.k8s-worker.*.private_ip,
+        aws_instance.k8s-worker.*.public_ip,
       ),
     )
     connection_strings_etcd = join(
@@ -205,7 +199,7 @@ data "template_file" "inventory" {
       formatlist(
         "%s ansible_host=%s",
         aws_instance.k8s-etcd.*.tags.Name,
-        aws_instance.k8s-etcd.*.private_ip,
+        aws_instance.k8s-etcd.*.public_ip,
       ),
     )
     list_master = join("\n", aws_instance.k8s-master.*.tags.Name)
