@@ -1,10 +1,16 @@
 ## Kubernetes on AWS with Terraform
 
-```
+```shell
+git checkout release-2.10
 pipenv install
 pipenv shell
 ansible -i inventory/aws/hosts.ini -m raw all -b -a "apt -yq install python"
+# Install
 ansible-playbook -i inventory/aws/hosts.ini -b cluster.yml
+# Upgrade
+git checkout release-2.11
+# Change the version in group_vars/k8s-cluster/k8s-cluster.yml
+ansible-playbook -i inventory/aws/hosts.ini -b upgrade-cluster.yml
 ```
 
 **Overview:**
