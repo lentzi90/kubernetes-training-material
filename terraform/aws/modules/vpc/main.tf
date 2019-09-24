@@ -133,11 +133,11 @@ resource "aws_security_group_rule" "allow-ssh-connections" {
   security_group_id = "${aws_security_group.kubernetes.id}"
 }
 
-# resource "aws_security_group_rule" "allow-k8s-connections" {
-#   type              = "ingress"
-#   from_port         = 6443
-#   to_port           = 6443
-#   protocol          = "TCP"
-#   cidr_blocks       = ["0.0.0.0/0"]
-#   security_group_id = "${aws_security_group.kubernetes.id}"
-# }
+resource "aws_security_group_rule" "allow-node-ports" {
+  type              = "ingress"
+  from_port         = 8000
+  to_port           = 65535
+  protocol          = "TCP"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = "${aws_security_group.kubernetes.id}"
+}
