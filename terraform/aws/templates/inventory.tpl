@@ -4,6 +4,9 @@ ${connection_strings_node}
 ${connection_strings_etcd}
 ${public_ip_address_bastion}
 
+[all:vars]
+ansible_user=ubuntu
+
 [bastion]
 ${public_ip_address_bastion}
 

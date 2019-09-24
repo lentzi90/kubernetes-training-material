@@ -4,6 +4,7 @@
 pipenv install
 pipenv shell
 ansible -i inventory/aws/hosts.ini -m raw all -b -a "apt -yq install python"
+ansible-playbook -i inventory/aws/hosts.ini -b cluster.yml
 ```
 
 **Overview:**
