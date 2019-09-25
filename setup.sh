@@ -37,9 +37,8 @@ kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/ma
 kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/master/example/prometheus-operator-crd/podmonitor.crd.yaml
 
 helm upgrade --install prom-operator stable/prometheus-operator \
-    --set prometheusOperator.createCustomResource=false \
-    --set grafana.service.type=NodePort,grafana.service.nodePort=30080 \
-    --set prometheus.service.type=NodePort \
+    --set alertmanager.config.global.slack_api_url=$(pass Udda/slack-demo-hook) \
+    -f values/prometheus-operator.yaml \
     --namespace monitoring --version 6.11.0 --atomic
 
 # kubectl delete -f https://raw.githubusercontent.com/coreos/prometheus-operator/master/example/prometheus-operator-crd/alertmanager.crd.yaml
@@ -49,3 +48,5 @@ helm upgrade --install prom-operator stable/prometheus-operator \
 # kubectl delete -f https://raw.githubusercontent.com/coreos/prometheus-operator/master/example/prometheus-operator-crd/podmonitor.crd.yaml
 
 helm upgrade --install blue-green charts/blue-green --namespace blue-green -f values/blue-green-v1.yaml
+
+helm upgrade --install blue-green charts/blue-green --namespace blue-green --set replicaCount=3 -f values/blue-green-v1.yaml

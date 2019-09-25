@@ -1,0 +1,27 @@
+prometheusOperator:
+  createCustomResource: false
+prometheus:
+  service:
+    type: NodePort
+grafana:
+  service:
+    type: NodePort
+    nodePort: 30080
+alertmanager:
+  service:
+    type: NodePort
+    nodePort: 30093
+  config:
+    route:
+      routes:
+      - match:
+          alertname: Watchdog
+        receiver: 'null'
+      - match:
+          source: grafana
+        receiver: 'lennart'
+    receivers:
+    - name: 'null'
+    - name: lennart
+      slack_configs:
+      - channel: Lennart Jern
