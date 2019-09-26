@@ -9,7 +9,7 @@ To do this without affecting the workload, you need to do three things:
 
 More detailed instructions below.
 
-Use the script [generate-certs.sh](../scripts/generate-certs.sh) to generate the new certificates.
+Use the script [generate-certs.sh](../../scripts/generate-certs.sh) to generate the new certificates.
 Note that it will not overwrite the old certificates, so you will need to remove the old ones or use a new folder.
 
 Example:
