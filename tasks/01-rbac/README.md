@@ -1,6 +1,6 @@
 # RBAC
 
-Prereq, start minikube with support for NetworkPolicies:
+Prereq, start minikube with support for NetworkPolicies (so you can reuse it with 02-networkpolicies):
 ```shell
 minikube start --network-plugin=cni
 minikube ssh -- sudo mount bpffs -t bpf /sys/fs/bpf
