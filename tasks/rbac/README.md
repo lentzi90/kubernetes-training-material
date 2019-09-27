@@ -1,14 +1,19 @@
 # RBAC
 
-1. Set up a cluster with kind: `kind cluster create`
-2. Configure access to the cluster: `export KUBECONFIG="$(kind get kubeconfig-path --name="kind")"`
-3. Create two namespaces named `blue` and `red`.
-4. Create Roles and RoleBindings that allow users `blue` and `red` to `create`, `patch`, `update` and `delete` Deployments and Services in their respective namespaces.
+Prereq, start minikube with support for NetworkPolicies:
+```shell
+minikube start --network-plugin=cni
+minikube ssh -- sudo mount bpffs -t bpf /sys/fs/bpf
+kubectl create -f https://raw.githubusercontent.com/cilium/cilium/v1.6/install/kubernetes/quick-install.yaml
+```
+
+1. Create two namespaces named `blue` and `red`.
+2. Create Roles and RoleBindings that allow users `blue` and `red` to `create`, `patch`, `update` and `delete` Deployments and Services in their respective namespaces.
    Note that Deployments belong to the `apps` API group and Services to the "core" (`""`).
 
    *Hint:* Use `kubectl create` instead of searching for examples on the internet.
    Check `kubectl create --help`, use `-o yaml` and `--dry-run` to see the manifest without making changes to the cluster.
-5. Check that your Roles and RoleBindings work by using `kubectl auth can-i`.
+3. Check that your Roles and RoleBindings work by using `kubectl auth can-i`.
    Here are some examples:
 
    ```shell
@@ -23,6 +28,6 @@
    # deployments.apps   []                  []               [create patch update delete]
    # ...
    ```
-6. Create a Role and RoleBinding that allow the `default` ServiceAccount in the `red` namespace to use the `privileged` PodSecurityPolicy.
-7. Check that your Role and RoleBinding are working with `kubectl auth can-i`.
-  Note that you can impersonate ServiceAccounts using this syntax: `kubectl -n namespace auth can-i verb resource --as system:serviceaccount:namespace:name`.
+4. Create a Role and RoleBinding that allow the `default` ServiceAccount in the `red` namespace to use the `privileged` PodSecurityPolicy.
+5. Check that your Role and RoleBinding are working with `kubectl auth can-i`.
+   Note that you can impersonate ServiceAccounts using this syntax: `kubectl -n namespace auth can-i verb resource --as system:serviceaccount:namespace:name`.

@@ -6,6 +6,13 @@ Minikube with Cilium for network policies: https://docs.cilium.io/en/v1.6/gettin
 
 ## Some handy snippets
 
+Minikube setup with Cilium for NetworkPolicies:
+```shell
+minikube start --network-plugin=cni
+minikube ssh -- sudo mount bpffs -t bpf /sys/fs/bpf
+kubectl create -f https://raw.githubusercontent.com/cilium/cilium/v1.6/install/kubernetes/quick-install.yaml
+```
+
 Terraform:
 ```shell
 cd terraform/aws
