@@ -13,6 +13,8 @@ minikube ssh -- sudo mount bpffs -t bpf /sys/fs/bpf
 kubectl create -f https://raw.githubusercontent.com/cilium/cilium/v1.6/install/kubernetes/quick-install.yaml
 ```
 
+### Kubespray on AWS
+
 Terraform:
 ```shell
 cd terraform/aws
@@ -41,6 +43,8 @@ ssh ubuntu@$IP_ADDRESS "mkdir .kube && sudo cp /etc/kubernetes/admin.conf .kube/
 scp ubuntu@$IP_ADDRESS:~/.kube/config kubeconfig
 ```
 
+### Helm and Tiller setup
+
 Initialize helm with certificates:
 ```shell
 ./scripts/initialize-cluster.sh certs
@@ -59,6 +63,8 @@ helm init --service-account=tiller --history-max 200
 kubectl rollout status deployment tiller-deploy -n kube-system
 ```
 
+### Test applications
+
 Deploy test app:
 ```shell
 kubectl create ns app-frontend
@@ -73,6 +79,15 @@ helm upgrade --install k8s-database charts/test-app-database-chart \
   -f values/k8s-test-app-database.yaml
 ```
 
+Blue-green:
+```shell
+helm upgrade --install blue-green charts/blue-green --namespace blue-green -f values/blue-green-v1.yaml
+
+helm upgrade --install blue-green charts/blue-green --namespace blue-green --set replicaCount=3 -f values/blue-green-v1.yaml
+```
+
+### Prometheus-operator
+
 Deploy prometheus-operator
 ```shell
 kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/master/example/prometheus-operator-crd/alertmanager.crd.yaml
@@ -86,6 +101,11 @@ helm upgrade --install prom-operator stable/prometheus-operator \
     -f values/prometheus-operator.yaml \
     --namespace monitoring --version 6.11.0 --atomic
 ```
+
+### Kube-backup
+
+Prereq: Set up a git repository and create a ssh-key (use `ssh-keygen`) with write access to it.
+You also need to create a `known_hosts` file (e.g. `ssh-keyscan gitlab.com > known_hosts`).
 
 Deploy kube-backup:
 ```shell
@@ -106,7 +126,8 @@ kubectl create secret generic kube-backup-ssh -n kube-system --from-file=id_rsa=
 kubectl apply -f manifests/backup
 ```
 
-PromQL:
+### PromQL
+
 ```
 container_memory_usage_bytes{namespace="monitoring", container!="POD"}
 (kube_pod_container_resource_requests{namespace="monitoring", container!="POD"}) / 1024 / 1024
@@ -124,11 +145,4 @@ sum(count(kube_pod_status_phase{phase="Running"} == 1)) by(pod) / sum(count(kube
 
 # Blue-green
 kube_deployment_status_replicas{deployment="blue-green"} / kube_deployment_spec_replicas{deployment="blue-green"}
-```
-
-Misc:
-```
-helm upgrade --install blue-green charts/blue-green --namespace blue-green -f values/blue-green-v1.yaml
-
-helm upgrade --install blue-green charts/blue-green --namespace blue-green --set replicaCount=3 -f values/blue-green-v1.yaml
 ```
