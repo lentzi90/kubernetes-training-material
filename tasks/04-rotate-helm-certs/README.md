@@ -1,5 +1,12 @@
 # Rotate certificates for helm and tiller
 
+Prereq:
+```shell
+./scripts/initialize-cluster.sh certs
+source scripts/helm-env.sh certs/kube-system/certs
+helm version
+```
+
 If the certificates get compromised or simply expire, you will need to generate new ones and replace the old certificates.
 To do this without affecting the workload, you need to do three things:
 
