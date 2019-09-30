@@ -41,6 +41,8 @@ Download `kubeconfig`:
 ```shell
 ssh ubuntu@$IP_ADDRESS "mkdir .kube && sudo cp /etc/kubernetes/admin.conf .kube/config && sudo chown ubuntu:ubuntu .kube/config"
 scp ubuntu@$IP_ADDRESS:~/.kube/config kubeconfig
+# TODO: Replace server address with loadbalancer public DNS
+export KUBECONFIG=$(pwd)/kubeconfig
 ```
 
 ### Helm and Tiller setup
@@ -127,6 +129,17 @@ kubectl apply -f manifests/backup
 ```
 
 ### PromQL
+
+Taken from https://blog.freshtracks.io/a-deep-dive-into-kubernetes-metrics-part-3-container-resource-metrics-361c5ee46e66
+
+- **container_memory_cache:** Number of bytes of page cache memory.
+- **container_memory_rss:** Size of RSS in bytes.
+- **container_memory_swap:** Container swap usage in bytes.
+- **container_memory_usage_bytes:** Current memory usage in bytes, including all memory regardless of when it was accessed.
+- **container_memory_max_usage_bytes** Maximum memory usage recorded in bytes.
+- **container_memory_working_set_bytes** Current working set in bytes.
+- **container_memory_failcnt** Number of memory usage hits limits.
+- **container_memory_failures_total** Cumulative count of memory allocation failures.
 
 ```
 container_memory_usage_bytes{namespace="monitoring", container!="POD"}
