@@ -6,6 +6,15 @@ Minikube with Cilium for network policies: https://docs.cilium.io/en/v1.6/gettin
 
 ## Some handy snippets
 
+KIND setup with Cilium for NetworkPolicies and PodSecurityPolicies enforced:
+```shell
+kind create cluster --config kind/NP-PSP-config.yaml
+# Add PSPs and RBAC
+kubectl create -f manifests/PSP/
+# Set up Cilium
+kubectl create -f https://raw.githubusercontent.com/cilium/cilium/v1.6/install/kubernetes/quick-install.yaml
+```
+
 Minikube setup with Cilium for NetworkPolicies:
 ```shell
 minikube start --network-plugin=cni

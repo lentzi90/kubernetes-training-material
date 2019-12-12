@@ -28,6 +28,6 @@ kubectl create -f https://raw.githubusercontent.com/cilium/cilium/v1.6/install/k
    # deployments.apps   []                  []               [create patch update delete]
    # ...
    ```
-4. Create a Role and RoleBinding that allow the `default` ServiceAccount in the `red` namespace to use the `privileged` PodSecurityPolicy.
+4. Create a Role and RoleBinding that allow the `default` ServiceAccount in the `red` namespace to use the `permissive` PodSecurityPolicy.
 5. Check that your Role and RoleBinding are working with `kubectl auth can-i`.
    Note that you can impersonate ServiceAccounts using this syntax: `kubectl -n namespace auth can-i verb resource --as system:serviceaccount:namespace:name`.

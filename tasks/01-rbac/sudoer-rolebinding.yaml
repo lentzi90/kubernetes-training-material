@@ -5,9 +5,11 @@ metadata:
   namespace: red
 roleRef:
   apiGroup: rbac.authorization.k8s.io
-  kind: Role
+  kind: ClusterRole
   name: sudo
 subjects:
 - kind: ServiceAccount
   name: default
   namespace: red
+# Check with
+# kubectl -n red auth can-i use podsecuritypolicy/permissive --as system:serviceaccount:red:default

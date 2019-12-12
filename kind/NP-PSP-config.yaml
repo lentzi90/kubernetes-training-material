@@ -1,0 +1,16 @@
+kind: Cluster
+apiVersion: kind.sigs.k8s.io/v1alpha3
+# Disable kindnet to use cilium instead
+networking:
+  disableDefaultCNI: true
+# patch the generated kubeadm config with some extra settings
+kubeadmConfigPatches:
+- |
+  apiVersion: kubeadm.k8s.io/v1beta2
+  kind: ClusterConfiguration
+  metadata:
+    name: config
+  apiServer:
+    extraArgs:
+      "enable-admission-plugins": "PodSecurityPolicy,NodeRestriction"
+# kubectl create -f https://raw.githubusercontent.com/cilium/cilium/v1.6/install/kubernetes/quick-install.yaml
