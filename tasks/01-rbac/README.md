@@ -1,11 +1,7 @@
 # RBAC
 
-Prereq, start minikube with support for NetworkPolicies (so you can reuse it with 02-networkpolicies):
-```shell
-minikube start --network-plugin=cni
-minikube ssh -- sudo mount bpffs -t bpf /sys/fs/bpf
-kubectl create -f https://raw.githubusercontent.com/cilium/cilium/v1.6/install/kubernetes/quick-install.yaml
-```
+Prereq: a Kubernetes cluster with support for RBAC and optionally PodSecurityPolicies and NetworkPolicies (for next task).
+Check the [README.md](../../README.md) for how to set up KIND with PSPs and Cilium.
 
 1. Create two namespaces named `blue` and `red`.
 2. Create Roles and RoleBindings that allow users `blue` and `red` to `create`, `patch`, `update` and `delete` Deployments and Services in their respective namespaces.
