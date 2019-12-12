@@ -26,4 +26,8 @@ Check the [README.md](../../README.md) for how to set up KIND with PSPs and Cili
    ```
 4. Create a Role and RoleBinding that allow the `default` ServiceAccount in the `red` namespace to use the `permissive` PodSecurityPolicy.
 5. Check that your Role and RoleBinding are working with `kubectl auth can-i`.
-   Note that you can impersonate ServiceAccounts using this syntax: `kubectl -n namespace auth can-i verb resource --as system:serviceaccount:namespace:name`.
+   Note that you can impersonate ServiceAccounts using this syntax: `kubectl -n namespace auth can-i verb resource/name --as system:serviceaccount:namespace:name`, e.g. `kubectl -n blue auth can-i use podsecuritypolicy/permissive --as system:serviceaccount:blue:default`.
+6. Try the demo deployments `demo-non-root-deploy.yaml` and `demo-root-deploy.yaml` and see how they behave.
+   Try deploying in both namespaces while impersonating `red` or `blue`.
+   You can also try explicitly specifying the `securityContext` for these Deployments (see the manifests).
+   How does the behavior differ?

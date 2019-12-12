@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: demo
+  name: demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demo
+  template:
+    metadata:
+      labels:
+        app: demo
+    spec:
+      # You can specify the security context explicitly
+      # securityContext:
+      #   runAsUser: 0
+      containers:
+      - image: nginxinc/nginx-unprivileged
+        name: nginx
+        ports:
+          - name: http
+            containerPort: 8080
