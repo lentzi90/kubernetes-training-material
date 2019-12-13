@@ -2,9 +2,9 @@
 
 This repository contains resources for hands-on exercises and demonstrations for various Kubernetes-related tools.
 
-Minikube with Cilium for network policies: https://docs.cilium.io/en/v1.6/gettingstarted/minikube/
+If you want some practical tasks to get your hands dirty with Kubernetes, head on to the [tasks](tasks) folder.
 
-## Some handy snippets
+If you need a local Kubernetes cluster to play with, install [kind](https://github.com/kubernetes-sigs/kind) and then use the commands below to create a cluster that works with NetworkPolicies and PodSecurityPolicies.
 
 KIND setup with Cilium for NetworkPolicies and PodSecurityPolicies enforced:
 ```shell
@@ -14,6 +14,16 @@ kubectl create -f manifests/PSP/
 # Set up Cilium
 kubectl create -f https://raw.githubusercontent.com/cilium/cilium/v1.6/install/kubernetes/quick-install.yaml
 ```
+
+The commands above creates a cluster with
+
+- [Cilium](https://cilium.io/) as network plugin to enforce NetworkPolicies
+- the PodSecurityPolicy admission plugin enabled to enforce PodSecurityPolicies
+- two basic PodSecurityPolicies (`permissive` and `restrictive`) along with some RBAC that
+  1. allow service accounts in `kube-system` to run privileged Pods using the `permissive` PSP
+  2. allow all service accounts to use the `restrictive` PSP
+
+## Some handy snippets
 
 Minikube setup with Cilium for NetworkPolicies:
 ```shell
