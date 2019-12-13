@@ -2,17 +2,17 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: demo
-  name: demo
+    app: demo-no-root
+  name: demo-no-root
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: demo
+      app: demo-no-root
   template:
     metadata:
       labels:
-        app: demo
+        app: demo-no-root
     spec:
       # You can specify the security context explicitly
       # securityContext:
