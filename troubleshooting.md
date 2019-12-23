@@ -16,6 +16,13 @@ kubectl get nodes
 kubectl describe node <name>
 ```
 
+Check validating webhooks and API services:
+```
+kubectl get validatingwebhookconfigurations
+kubectl get apiservices
+```
+The API server may time out or forbid requests if an API service or the service backing a validating webhook is down.
+
 ## Workload problems (pods)
 
 List pods and check their status: `kubectl get pods --all-namespaces`. Are they all `Running`? (Jobs can be `Completed` also.)
