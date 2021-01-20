@@ -32,6 +32,13 @@ minikube ssh -- sudo mount bpffs -t bpf /sys/fs/bpf
 kubectl create -f https://raw.githubusercontent.com/cilium/cilium/v1.6/install/kubernetes/quick-install.yaml
 ```
 
+KIND setup with ingress
+```shell
+kind create cluster --config kind/config.yaml
+# Install ingress controller
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/kind/deploy.yaml
+```
+
 ### Helm and Tiller setup
 
 Initialize helm with certificates:
