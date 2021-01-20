@@ -32,38 +32,6 @@ minikube ssh -- sudo mount bpffs -t bpf /sys/fs/bpf
 kubectl create -f https://raw.githubusercontent.com/cilium/cilium/v1.6/install/kubernetes/quick-install.yaml
 ```
 
-### Kubespray on AWS
-
-Terraform:
-```shell
-cd terraform/aws
-terraform init
-terraform apply
-# Copy hosts.ini to kubespray inventory
-```
-
-Kubspray installation and upgrade:
-```shell
-git checkout release-2.10
-pipenv install
-pipenv shell
-ansible -i inventory/aws/hosts.ini -m raw all -b -a "apt -yq install python"
-# Install
-ansible-playbook -i inventory/aws/hosts.ini -b cluster.yml
-# Upgrade
-git checkout release-2.11
-# Change the version in group_vars/k8s-cluster/k8s-cluster.yml
-ansible-playbook -i inventory/aws/hosts.ini -b upgrade-cluster.yml
-```
-
-Download `kubeconfig`:
-```shell
-ssh ubuntu@$IP_ADDRESS "mkdir .kube && sudo cp /etc/kubernetes/admin.conf .kube/config && sudo chown ubuntu:ubuntu .kube/config"
-scp ubuntu@$IP_ADDRESS:~/.kube/config kubeconfig
-# TODO: Replace server address with loadbalancer public DNS
-export KUBECONFIG=$(pwd)/kubeconfig
-```
-
 ### Helm and Tiller setup
 
 Initialize helm with certificates:
