@@ -12,13 +12,13 @@ Check the [README.md](../../README.md) for how to set up KIND with Cilium.
 3. Create an nginx deployment and service in both namespaces: `kubectl -n [red|blue] create deploy nginx --image nginx`, `kubectl -n [red|blue] expose deploy nginx --port 80`
 4. Check that you **can** reach the nginx Service in `red` from `blue`:
    ```shell
-   kubectl -n blue run busybox --generator=run-pod/v1 --rm -ti --image=busybox /bin/sh
+   kubectl -n blue run busybox --rm -ti --image=busybox /bin/sh
    wget -q -O - nginx.red
    ```
 5. Check that you **cannot** reach the nginx Service in `blue` from `red`:
 
    ```shell
-   kubectl -n red run busybox --generator=run-pod/v1 --rm -ti --image=busybox /bin/sh
+   kubectl -n red run busybox --rm -ti --image=busybox /bin/sh
    wget -q -O - nginx.blue
    ```
 6. Check other namespaces and combinations as you like. Can you reach the service from its own namespace? How about from `kube-system` or `default`?

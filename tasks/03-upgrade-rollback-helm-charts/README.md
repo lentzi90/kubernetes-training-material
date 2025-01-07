@@ -6,13 +6,6 @@ Prereq: Create a Kubernetes cluster using minikube or kind, initialize helm and 
 
 ```shell
 minikube start
-# Cluster wide tiller
-kubectl -n kube-system create sa tiller
-kubectl create clusterrolebinding tiller --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
-# Insecure tiller, just for demo
-helm init --service-account=tiller --history-max 200
-# Wait for tiller to start
-kubectl rollout status deployment tiller-deploy -n kube-system
 # Install blue-green app
 helm upgrade --install blue-green charts/blue-green --namespace blue-green -f values/blue-green-v1.yaml
 ```

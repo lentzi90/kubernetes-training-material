@@ -1,6 +1,12 @@
 # Resource requests
 
-Prereq: Start minikube and enable the metrics-server addon: `minikube addons enable metrics-server`
+Prereq: Create a kind cluster and install the metrics-server:
+
+```bash
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+kubectl -n kube-system patch deploy metrics-server --type=json\
+  -p='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--kubelet-insecure-tls"}]'
+```
 
 1. Create a namespace for the demo: `kubectl create ns resource-demo`
 2. Deploy the demo Deployment: `kubectl apply -f manifests/resource-requests/demo-deploy.yaml`

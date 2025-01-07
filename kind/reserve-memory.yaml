@@ -1,13 +1,13 @@
 kind: Cluster
-apiVersion: kind.sigs.k8s.io/v1alpha3
-# patch the generated kubeadm config with some extra settings
-kubeadmConfigPatches:
-- |
-  apiVersion: kubelet.config.k8s.io/v1beta1
-  kind: KubeletConfiguration
-  systemReserved:
-    cpu: "1"
-    memory: 8G
-  kubeReserved:
-    cpu: 200m
-    memory: 100M
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+- role: control-plane
+  kubeadmConfigPatches:
+  - |
+    kind: KubeletConfiguration
+    systemReserved:
+      cpu: "1"
+      memory: 8G
+    kubeReserved:
+      cpu: 200m
+      memory: 100M

@@ -8,7 +8,7 @@ kind create cluster --config kind/config.yaml
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/kind/deploy.yaml
 
 # Install cert-manager
-kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v1.1.0/cert-manager.yaml
+kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.16.2/cert-manager.yaml
 # Create a namespace to experiment in
 NAMESPACE=demo
 kubectl create namespace ${NAMESPACE}

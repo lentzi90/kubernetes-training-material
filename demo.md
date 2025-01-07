@@ -1,12 +1,11 @@
-# Demonstration of RBAC, PSPs and NetworkPolicies
+# Demonstration of RBAC, PSS and NetworkPolicies
 
 KIND setup with Cilium for NetworkPolicies and PodSecurityPolicies enforced:
 ```shell
-kind create cluster --config kind/NP-PSP-config.yaml
-# Add PSPs and RBAC
-kubectl create -f manifests/PSP/
+kind create cluster --config kind/cni-config.yaml
 # Set up Cilium
-kubectl create -f https://raw.githubusercontent.com/cilium/cilium/v1.6/install/kubernetes/quick-install.yaml
+helm repo add cilium https://helm.cilium.io/
+helm install cilium cilium/cilium --version 1.16.5 --namespace kube-system
 
 #
 # Network policies
@@ -22,8 +21,8 @@ kubectl apply -f tasks/02-networkpolicies/blue-nginx-svc.yaml
 kubectl apply -f tasks/02-networkpolicies/red-nginx-svc.yaml
 
 # Start two test pods
-kubectl -n blue run busybox --generator=run-pod/v1 --rm -ti --image=busybox /bin/sh
-kubectl -n red run busybox --generator=run-pod/v1 --rm -ti --image=busybox /bin/sh
+kubectl -n blue run busybox --rm -ti --image=busybox /bin/sh
+kubectl -n red run busybox --rm -ti --image=busybox /bin/sh
 
 # Check that each demo deployment can be reached
 wget -q -O - nginx.blue.svc.cluster.local
@@ -55,15 +54,19 @@ kubectl auth can-i create deploy.apps -n blue --as blue # should be yes
 kubectl auth can-i create deploy.apps -n blue --as red # should be no
 
 #
-# Pod security policies
+# Pod security standards
 #
 
-# Allow the default service account in red to use the permissive PSP
-kubectl apply -f tasks/01-rbac/sudo-psp-role.yaml
-kubectl apply -f tasks/01-rbac/sudoer-rolebinding.yaml
+# Check how existing workload would be affected by pod security:
+kubectl label --dry-run=server --overwrite ns --all \
+    pod-security.kubernetes.io/enforce=baseline
 
-# Check:
-kubectl -n red auth can-i use podsecuritypolicy/permissive --as system:serviceaccount:red:default
+# Use labels to make the red namespace use privileged PSS
+# and the blue use restricted
+kubectl label --overwrite ns red \
+    pod-security.kubernetes.io/enforce=privileged
+kubectl label --overwrite ns blue \
+    pod-security.kubernetes.io/enforce=restricted
 
 # Demo deployments for testing
 kubectl -n blue apply -f tasks/01-rbac/demo-root-deploy.yaml

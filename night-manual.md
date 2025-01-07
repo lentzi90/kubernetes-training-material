@@ -18,15 +18,6 @@ kubectl delete pods <name> -n <namespace>
 
 ### Helm charts
 
-**Set up helm flags** to access the correct tiller:
-```shell
-source scripts/helm-env.sh <namespace> prod-certs/cluster/certs <admin-name>
-# Example
-# source scripts/helm-env.sh kube-system prod-certs/cluster/certs lennart
-# see that it works
-helm list
-```
-
 **Roll back helm releases:**
 ```shell
 # show current release(s)
@@ -78,7 +69,7 @@ To reinstall the chart(s), **set up helm flags** and **reinstall** as described 
 
 ## Node problem
 
-If a node is having problems, try adding new nodes (using terraform), [scaling up the cluster](https://kubespray.io/#/docs/getting-started?id=adding-nodes) and draining the problematic node.
+If a node is having problems, try scaling up the cluster and draining the problematic node.
 ```
 kubectl drain <node-name> --ignore-daemonsets --delete-local-data
 ```
@@ -86,9 +77,3 @@ This should be enough to move almost everything from the node.
 Only daemonsets will still run pods there.
 
 To completely remove the node, you also have to remove it from the cluster and delete the virtual machine.
-See the kubespray [documentation](https://kubespray.io/#/docs/getting-started?id=remove-nodes) for how to remove the node from the cluster.
-Remember to also delete the virtual machine using terraform.
-```
-# remove the virtual machine from terraform code and then apply:
-terraform apply
-```

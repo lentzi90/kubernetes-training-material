@@ -1,7 +1,7 @@
 # RBAC
 
-Prereq: a Kubernetes cluster with support for RBAC and optionally PodSecurityPolicies and NetworkPolicies (for next task).
-Check the [README.md](../../README.md) for how to set up KIND with PSPs and Cilium.
+Prereq: a Kubernetes cluster with support for RBAC and optionally NetworkPolicies (for next task).
+Check the [README.md](../../README.md) for how to set up KIND with Cilium.
 
 1. Create two namespaces named `blue` and `red`.
 2. Create Roles and RoleBindings that allow users `blue` and `red` to `create`, `patch`, `update` and `delete` Deployments and Services in their respective namespaces.
@@ -24,10 +24,17 @@ Check the [README.md](../../README.md) for how to set up KIND with PSPs and Cili
    # deployments.apps   []                  []               [create patch update delete]
    # ...
    ```
-4. Create a Role and RoleBinding that allow the `default` ServiceAccount in the `red` namespace to use the `permissive` PodSecurityPolicy.
-5. Check that your Role and RoleBinding are working with `kubectl auth can-i`.
-   Note that you can impersonate ServiceAccounts using this syntax: `kubectl -n namespace auth can-i verb resource/name --as system:serviceaccount:namespace:name`, e.g. `kubectl -n blue auth can-i use podsecuritypolicy/permissive --as system:serviceaccount:blue:default`.
-6. Try the demo deployments `demo-non-root-deploy.yaml` and `demo-root-deploy.yaml` and see how they behave.
-   Try deploying in both namespaces while impersonating `red` or `blue`.
+4. Label the `red` namespace to enforce the `privileged` PodSecurityStandard and the `blue` namespace to enforce the `restrictive` PodSecurityStandard.
+   The labels look like this:
+   `pod-security.kubernetes.io/enforce=privileged` (privileged)
+   `pod-security.kubernetes.io/enforce=restricted` (restricted).
+5. Try the demo deployments `demo-non-root-deploy.yaml` and `demo-root-deploy.yaml` and see how they behave.
    You can also try explicitly specifying the `securityContext` for these Deployments (see the manifests).
    How does the behavior differ?
+   You can also deploy everything first and label the namespaces afterwards!
+   A useful check then is to do a dry-run to see if there are any issues:
+
+   ```bash
+   kubectl label --dry-run=server --overwrite ns blue \
+       pod-security.kubernetes.io/enforce=restricted
+   ```

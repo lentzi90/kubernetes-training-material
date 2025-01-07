@@ -4,33 +4,30 @@ This repository contains resources for hands-on exercises and demonstrations for
 
 If you want some practical tasks to get your hands dirty with Kubernetes, head on to the [tasks](tasks) folder.
 
-If you need a local Kubernetes cluster to play with, install [kind](https://github.com/kubernetes-sigs/kind) and then use the commands below to create a cluster that works with NetworkPolicies and PodSecurityPolicies.
+If you need a local Kubernetes cluster to play with, install [kind](https://github.com/kubernetes-sigs/kind) and then use the commands below to create a cluster that works with NetworkPolicies and PodSecurityStandards.
 
 KIND setup with Cilium for NetworkPolicies and PodSecurityPolicies enforced:
 ```shell
-kind create cluster --config kind/NP-PSP-config.yaml
-# Add PSPs and RBAC
-kubectl create -f manifests/PSP/
+kind create cluster --config kind/cni-config.yaml
+# Configure PodSecurityStandards
+kubectl label ns --all \
+    pod-security.kubernetes.io/enforce=baseline
+kubectl label --overwrite ns kube-system pod-security.kubernetes.io/enforce=privileged
 # Set up Cilium
-kubectl create -f https://raw.githubusercontent.com/cilium/cilium/v1.6/install/kubernetes/quick-install.yaml
+helm repo add cilium https://helm.cilium.io/
+helm install cilium cilium/cilium --version 1.16.5 --namespace kube-system
+
 ```
 
 The commands above creates a cluster with
 
 - [Cilium](https://cilium.io/) as network plugin to enforce NetworkPolicies
-- the PodSecurityPolicy admission plugin enabled to enforce PodSecurityPolicies
-- two basic PodSecurityPolicies (`permissive` and `restrictive`) along with some RBAC that
-  1. allow service accounts in `kube-system` to run privileged Pods using the `permissive` PSP
-  2. allow all service accounts to use the `restrictive` PSP
+- enforces the `permissive` Pod Security Standard for the kube-system namespace
+- enforces the `baseline` Pod Security Standard for all other namespaces.
+
+NOTE: Of you create new namespaces, you will need to label them also in order to enforce the PSS!
 
 ## Some handy snippets
-
-Minikube setup with Cilium for NetworkPolicies:
-```shell
-minikube start --network-plugin=cni
-minikube ssh -- sudo mount bpffs -t bpf /sys/fs/bpf
-kubectl create -f https://raw.githubusercontent.com/cilium/cilium/v1.6/install/kubernetes/quick-install.yaml
-```
 
 KIND setup with ingress
 ```shell
@@ -39,44 +36,11 @@ kind create cluster --config kind/config.yaml
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/kind/deploy.yaml
 ```
 
-### Helm and Tiller setup
-
-Initialize helm with certificates:
-```shell
-./scripts/initialize-cluster.sh certs
-source scripts/helm-env.sh certs/kube-system/certs
-helm version
-```
-
-Initialize helm without certificates:
-```shell
-# Cluster wide tiller
-kubectl -n kube-system create sa tiller
-kubectl create clusterrolebinding tiller --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
-# Insecure tiller, just for demo
-helm init --service-account=tiller --history-max 200
-# Wait for tiller to start
-kubectl rollout status deployment tiller-deploy -n kube-system
-```
-
 ### Test applications
-
-Deploy test app:
-```shell
-kubectl create ns app-frontend
-kubectl create ns app-backend
-kubectl create ns app-database
-
-helm upgrade --install k8s-front charts/test-app-frontend-chart \
-  -f values/k8s-test-app-front.yaml
-helm upgrade --install k8s-back charts/test-app-backend-chart \
-  -f values/k8s-test-app-backend.yaml
-helm upgrade --install k8s-database charts/test-app-database-chart \
-  -f values/k8s-test-app-database.yaml
-```
 
 Blue-green:
 ```shell
+kubectl create namespace blue-green
 helm upgrade --install blue-green charts/blue-green --namespace blue-green -f values/blue-green-v1.yaml
 
 helm upgrade --install blue-green charts/blue-green --namespace blue-green --set replicaCount=3 -f values/blue-green-v1.yaml
@@ -96,30 +60,6 @@ helm upgrade --install prom-operator stable/prometheus-operator \
     --set alertmanager.config.global.slack_api_url=$(pass Udda/slack-demo-hook) \
     -f values/prometheus-operator.yaml \
     --namespace monitoring --version 6.11.0 --atomic
-```
-
-### Kube-backup
-
-Prereq: Set up a git repository and create a ssh-key (use `ssh-keygen`) with write access to it.
-You also need to create a `known_hosts` file (e.g. `ssh-keyscan gitlab.com > known_hosts`).
-
-Deploy kube-backup:
-```shell
-# Storage class
-kubectl apply -f - <<EOF
-apiVersion: storage.k8s.io/v1
-kind: StorageClass
-metadata:
-  name: default
-  annotations:
-    storageclass.kubernetes.io/is-default-class: "true"
-provisioner: kubernetes.io/aws-ebs
-EOF
-
-# Secret used by kube-backup
-kubectl create secret generic kube-backup-ssh -n kube-system --from-file=id_rsa=.ssh/id_rsa --from-file=known_hosts=.ssh/known_hosts
-# Deploy kube-backup
-kubectl apply -f manifests/backup
 ```
 
 ### PromQL
